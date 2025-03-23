@@ -8,6 +8,6 @@ app.use(express.json());
 app.use(UserRoute);
 
 app.listen(5000, '0.0.0.0', () => {
-    console.log("Server up and running on public IP...");
+    console.log("Server up and running on public IP... woiiiiiiiiiiiiii");
 });
 
