@@ -1,11 +1,19 @@
 steps:
+  # Step 1: Install dependencies dan build frontend
+  - name: 'node'
+    entrypoint: 'bash'
+    args:
+      ['-c', 'cd frontend && npm install && npm run build']
+
+  # Step 2: Deploy frontend
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: "bash"
     args:
       [
         "-c",
-        "gcloud config set app/cloud_build_timeout 1600 && gcloud app deploy",
+        "cd frontend && gcloud config set app/cloud_build_timeout 1600 && gcloud app deploy --quiet"
       ]
+
 timeout: "1600s"
 
 options:
