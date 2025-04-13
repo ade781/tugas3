@@ -1,21 +1,23 @@
 steps:
-  # Install dependencies
+  # Step 1: Install dependencies
   - name: 'node'
-    entrypoint: 'npm'
-    args: ['install']
+    entrypoint: 'bash'
+    args:
+      ['-c', 'cd frontend && npm install']
 
-  # Build project
+  # Step 2: Build frontend (misalnya React/Vite/Next.js)
   - name: 'node'
-    entrypoint: 'npm'
-    args: ['run', 'build']
+    entrypoint: 'bash'
+    args:
+      ['-c', 'cd frontend && npm run build']
 
-  # Deploy to App Engine
+  # Step 3: Deploy ke App Engine
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: "bash"
     args:
       [
         "-c",
-        "gcloud config set app/cloud_build_timeout 1600 && gcloud app deploy --quiet",
+        "cd frontend && gcloud config set app/cloud_build_timeout 1600 && gcloud app deploy --quiet",
       ]
 
 timeout: "1600s"
