@@ -25,51 +25,68 @@ const UserList = () => {
     };
 
     return (
-        <div className="columns mt-5 is-centered">
-            <div className="column is-half">
-                <div className="mb-3">
-                    <Link to={`add`} className="button is-success is-rounded">
+        <div className="columns mt-5 is-centered" style={{ padding: '2.5rem' }}>
+            <div className="column is-full">
+                <div className="mb-5 flex justify-between items-center">
+                    <h1 className="title is-4">📒 Daftar Catatan</h1>
+                    <Link
+                        to={`add`}
+                        className="button is-success is-rounded hover:transform hover:-translate-y-0.5 hover:shadow-md transition-all"
+                    >
                         ➕ Tambah Catatan
                     </Link>
                 </div>
-                <table className="table is-striped is-fullwidth">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>judul</th>
-                            <th>kategori</th>
-                            <th>isi</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map((user, index) => (
-                            <tr key={user.id}>
-                                <td>{index + 1}</td>
-                                <td>{user.judul}</td>
-                                <td>{user.kategori}</td>
-                                <td>{user.isi}</td>
-                                <td>
+
+                <div className="columns is-multiline">
+                    {users.map((user, index) => (
+                        <div key={user.id} className="column is-one-quarter">
+                            <div
+                                className="box hover:transform hover:-translate-y-1 hover:shadow-lg hover:border-blue-500 transition-all"
+                                style={{
+                                    height: '100%',
+                                    border: '1px solid rgb(49, 89, 199)',
+                                    transitionDuration: '200ms'
+                                }}
+                            >
+                                <p className="has-text-weight-semibold mb-2">{user.judul}</p>
+                                <p className="is-size-7 mb-1"><strong>Kategori:</strong> {user.kategori}</p>
+                                <p className="is-size-7 mb-4">{user.isi}</p>
+                                <div className="buttons are-small is-right">
                                     <Link
                                         to={`edit/${user.id}`}
-                                        className="button is-small is-info mr-2"
+                                        className="button is-info is-light hover:transform hover:scale-105 hover:shadow-sm transition-all"
                                     >
-                                        Edit
+                                        ✏️ Edit
                                     </Link>
                                     <button
                                         onClick={() => deleteUser(user.id)}
-                                        className="button is-small is-danger"
+                                        className="button is-danger is-light hover:transform hover:scale-105 hover:shadow-sm transition-all"
                                     >
-                                        Delete
+                                        🗑️ Hapus
                                     </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                <footer className="has-text-centered mt-6" style={{
+                    color: '#b8d8eb',
+                    fontSize: '0.9rem',
+                    fontStyle: 'italic',
+                    fontFamily: "'Playfair Display', serif",
+                    padding: '1.5rem 0',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+                    backgroundColor: 'rgba(15, 32, 39, 0.8)',
+                    backdropFilter: 'blur(6px)'
+                }}>
+                    <p>made by <strong>Arya Ade Wiguna</strong> — inspired by <em>Moonlight Sonata</em> 🌙</p>
+                </footer>
             </div>
         </div>
+
+
     );
+
 };
 
 export default UserList;
