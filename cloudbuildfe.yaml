@@ -1,11 +1,23 @@
 steps:
+  # Install dependencies
+  - name: 'node'
+    entrypoint: 'npm'
+    args: ['install']
+
+  # Build project
+  - name: 'node'
+    entrypoint: 'npm'
+    args: ['run', 'build']
+
+  # Deploy to App Engine
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: "bash"
     args:
       [
         "-c",
-        "gcloud config set app/cloud_build_timeout 1600 && gcloud app deploy",
+        "gcloud config set app/cloud_build_timeout 1600 && gcloud app deploy --quiet",
       ]
+
 timeout: "1600s"
 
 options:
