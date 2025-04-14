@@ -1,11 +1,2 @@
 runtime: nodejs20
-instance_class: F1
 service: default
-
-handlers:
-  - url: /
-    static_files: dist/index.html
-    upload: dist/index.html
-
-  - url: /
-    static_dir: dist
