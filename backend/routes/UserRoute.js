@@ -1,17 +1,30 @@
 import express from "express";
 import {
-    createUsers,
     getUsers,
+    createUser,
     updateUser,
-    deleteUser
-}
-    from "../controllers/UserController.js";
+    deleteUser,
+    getUserById,
+    loginHandler,
+    logout
+} from "../controllers/UserController.js";
+
+import { refreshToken } from "../controllers/RefreshToken.js";
+import { verifyToken } from "../middleware/VerifyToken.js";
+
 
 const router = express.Router();
 
-//buat endpoint
-router.get('/note', getUsers);
-router.post('/note', createUsers);
-router.put('/note/:id', updateUser);
-router.delete('/note/:id', deleteUser);
+//endpoint akses token
+router.get('/token', refreshToken);
+//endpoin auth
+router.post('/login', loginHandler);
+router.delete('/logout', logout);
+
+router.get("/users", verifyToken, getUsers);
+router.get("/users/:id", verifyToken, getUserById);
+router.post("/add-user", createUser);
+router.put("/edit-user/:id", verifyToken, updateUser);
+router.delete("/delete-user/:id", deleteUser);
+
 export default router;
