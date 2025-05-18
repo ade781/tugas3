@@ -12,7 +12,7 @@ app.get("/", (req, res) => res.send("Server running..."));
 configDotenv.config();
 
 app.use(cookieParser());
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+app.use(cors({ credentials: true, origin: 'https://f-04-450706.uc.r.appspot.com' }));
 app.use(express.json());
 
 // Routes
