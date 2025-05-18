@@ -6,7 +6,8 @@ import cookieParser from "cookie-parser";
 import configDotenv from "dotenv";
 
 const app = express();
-app.set("view engine", "ejs");
+app.get("/", (req, res) => res.send("Server running..."));
+
 
 configDotenv.config();
 
