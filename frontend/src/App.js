@@ -1,4 +1,3 @@
-// App.js
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NoteList from "./components/NoteList";
 import AddNote from "./components/AddNote";
