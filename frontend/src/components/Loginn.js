@@ -9,21 +9,18 @@ const Auth = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
+    const [moonHover, setMoonHover] = useState(false);
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setErrorMsg("");
         try {
-            const response = await axios.post(`${BASE_URL}/login`, { email, password });
-            localStorage.setItem("accessToken", response.data.accessToken);
+            const res = await axios.post(`${BASE_URL}/login`, { email, password });
+            localStorage.setItem("accessToken", res.data.accessToken);
             navigate("/note");
-        } catch (error) {
-            if (error.response && error.response.status === 401) {
-                setErrorMsg("Email atau password salah");
-            } else {
-                setErrorMsg("Terjadi kesalahan, coba lagi");
-            }
+        } catch (err) {
+            setErrorMsg("Email atau Password salah");
         }
     };
 
@@ -32,282 +29,263 @@ const Auth = () => {
         setErrorMsg("");
         try {
             await axios.post(`${BASE_URL}/add-user`, { name, email, password });
-            alert("Registrasi berhasil! Silakan login.");
+            alert("Registrasi berhasil");
             setIsLogin(true);
-            setName("");
-            setEmail("");
-            setPassword("");
-        } catch (error) {
-            if (error.response && error.response.data && error.response.data.message) {
-                setErrorMsg(error.response.data.message);
-            } else {
-                setErrorMsg("Terjadi kesalahan saat registrasi, coba lagi");
-            }
+            setName(""); setEmail(""); setPassword("");
+        } catch (err) {
+            setErrorMsg("Registrasi gagal");
         }
     };
 
+    // Create floating notes
+    const renderNotes = () => {
+        const notes = ['♪', '♫', '♩', '♬'];
+        return notes.map((note, index) => (
+            <div key={index} style={{
+                position: 'absolute',
+                fontSize: '24px',
+                color: `rgba(255, 255, 255, ${0.4 + Math.random() * 0.6})`,
+                top: `${10 + Math.random() * 80}%`,
+                left: `${10 + Math.random() * 80}%`,
+                transform: `rotate(${Math.random() * 60 - 30}deg)`,
+                transition: 'all 0.3s ease',
+                animation: `float ${3 + Math.random() * 4}s ease-in-out infinite`,
+                zIndex: 1
+            }}>
+                {note}
+            </div>
+        ));
+    };
+
     return (
-        <div style={styles.container}>
-            {/* Moon element */}
-            <div style={styles.moon}></div>
+        <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '100vh',
+            background: 'linear-gradient(135deg, #0f0c29, #302b63, #24243e)',
+            color: '#e0e0e0',
+            fontFamily: "'Arial', sans-serif",
+            position: 'relative',
+            overflow: 'hidden'
+        }}>
+            {/* Moon */}
+            <div
+                style={{
+                    position: 'absolute',
+                    top: '15%',
+                    right: '15%',
+                    width: '120px',
+                    height: '120px',
+                    background: 'radial-gradient(circle at 30% 30%, #f5f5f5, #d4d4d4)',
+                    borderRadius: '50%',
+                    boxShadow: `0 0 ${moonHover ? '60px' : '40px'} rgba(245, 245, 245, ${moonHover ? 0.8 : 0.5})`,
+                    transition: 'all 0.3s ease',
+                    animation: 'float 6s ease-in-out infinite',
+                    cursor: 'pointer',
+                    transform: moonHover ? 'scale(1.1)' : 'scale(1)',
+                    zIndex: 2
+                }}
+                onMouseEnter={() => setMoonHover(true)}
+                onMouseLeave={() => setMoonHover(false)}
+            >
+                <div style={{
+                    position: 'absolute',
+                    top: '20px',
+                    left: '20px',
+                    width: '20px',
+                    height: '20px',
+                    background: 'rgba(200, 200, 200, 0.8)',
+                    borderRadius: '50%'
+                }}></div>
+                <div style={{
+                    position: 'absolute',
+                    top: '40px',
+                    left: '50px',
+                    width: '15px',
+                    height: '15px',
+                    background: 'rgba(200, 200, 200, 0.6)',
+                    borderRadius: '50%'
+                }}></div>
+            </div>
 
-            {/* Music notes decoration */}
-            <div style={styles.musicNote1}>♬</div>
-            <div style={styles.musicNote2}>♫</div>
+            {/* Stars */}
+            {Array.from({ length: 30 }).map((_, i) => (
+                <div key={i} style={{
+                    position: 'absolute',
+                    width: '3px',
+                    height: '3px',
+                    background: 'white',
+                    borderRadius: '50%',
+                    animation: `twinkle ${2 + Math.random() * 3}s infinite ease-in-out`,
+                    top: `${Math.random() * 100}%`,
+                    left: `${Math.random() * 100}%`,
+                    opacity: 0.5 + Math.random() * 0.5
+                }}></div>
+            ))}
 
-            <div style={styles.card}>
-                <h2 style={styles.title}>
-                    {isLogin ? "Login" : "Register"}
-                    <span style={styles.pianoKey}></span>
+            {/* Musical notes */}
+            {renderNotes()}
+
+            {/* Auth Form */}
+            <div style={{
+                background: 'rgba(30, 30, 60, 0.8)',
+                padding: '2rem',
+                borderRadius: '15px',
+                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)',
+                width: '350px',
+                zIndex: 10,
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+                <h2 style={{
+                    textAlign: 'center',
+                    marginBottom: '1.5rem',
+                    color: '#e0e0e0',
+                    fontSize: '2rem',
+                    textShadow: '0 0 10px rgba(255, 255, 255, 0.3)',
+                    position: 'relative'
+                }}>
+                    {isLogin ? "Moonlight Login" : "Moonlight Register"}
+                    <div style={{
+                        display: 'block',
+                        width: '50px',
+                        height: '3px',
+                        background: 'linear-gradient(to right, #9c88ff, #8c7ae6)',
+                        margin: '0.5rem auto',
+                        borderRadius: '3px'
+                    }}></div>
                 </h2>
-                <p style={styles.subtitle}>
-                    {isLogin ? "Masuk untuk melanjutkan" : "Buat akun baru"}
-                    <span style={styles.subtitleDecoration}>♪</span>
-                </p>
 
-                <form onSubmit={isLogin ? handleLogin : handleRegister} style={styles.form}>
+                <form onSubmit={isLogin ? handleLogin : handleRegister}>
                     {!isLogin && (
-                        <div style={styles.inputGroup}>
-                            <label style={styles.label}>
-                                <span style={styles.labelIcon}>♩</span> Nama
-                            </label>
+                        <div style={{ marginBottom: '1.5rem', position: 'relative' }}>
+                            <label style={{
+                                display: 'block',
+                                marginBottom: '0.5rem',
+                                color: '#b8b8b8',
+                                fontSize: '0.9rem'
+                            }}>Nama</label>
                             <input
                                 type="text"
-                                placeholder="Masukkan nama"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                required={!isLogin}
-                                style={styles.input}
+                                required
+                                style={{
+                                    width: '100%',
+                                    padding: '0.8rem',
+                                    background: 'rgba(255, 255, 255, 0.1)',
+                                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                                    borderRadius: '5px',
+                                    color: 'white',
+                                    fontSize: '1rem',
+                                    transition: 'all 0.3s ease'
+                                }}
                             />
                         </div>
                     )}
-
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>
-                            <span style={styles.labelIcon}>♪</span> Email
-                        </label>
+                    <div style={{ marginBottom: '1.5rem', position: 'relative' }}>
+                        <label style={{
+                            display: 'block',
+                            marginBottom: '0.5rem',
+                            color: '#b8b8b8',
+                            fontSize: '0.9rem'
+                        }}>Email</label>
                         <input
                             type="email"
-                            placeholder="Masukkan email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            style={styles.input}
+                            style={{
+                                width: '100%',
+                                padding: '0.8rem',
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                border: '1px solid rgba(255, 255, 255, 0.2)',
+                                borderRadius: '5px',
+                                color: 'white',
+                                fontSize: '1rem',
+                                transition: 'all 0.3s ease'
+                            }}
                         />
                     </div>
-
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>
-                            <span style={styles.labelIcon}>♫</span> Password
-                        </label>
+                    <div style={{ marginBottom: '1.5rem', position: 'relative' }}>
+                        <label style={{
+                            display: 'block',
+                            marginBottom: '0.5rem',
+                            color: '#b8b8b8',
+                            fontSize: '0.9rem'
+                        }}>Password</label>
                         <input
                             type="password"
-                            placeholder="Masukkan password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            style={styles.input}
+                            style={{
+                                width: '100%',
+                                padding: '0.8rem',
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                border: '1px solid rgba(255, 255, 255, 0.2)',
+                                borderRadius: '5px',
+                                color: 'white',
+                                fontSize: '1rem',
+                                transition: 'all 0.3s ease'
+                            }}
                         />
                     </div>
-
-                    {errorMsg && <p style={styles.error}>{errorMsg}</p>}
-
-                    <button type="submit" style={styles.submitButton}>
-                        {isLogin ? "Login" : "Register"}
-                        <span style={styles.buttonIcon}>→</span>
-                    </button>
+                    {errorMsg && <p style={{
+                        color: '#ff6b6b',
+                        textAlign: 'center',
+                        margin: '1rem 0',
+                        fontSize: '0.9rem'
+                    }}>{errorMsg}</p>}
+                    <button type="submit" style={{
+                        width: '100%',
+                        padding: '0.8rem',
+                        background: 'linear-gradient(to right, #9c88ff, #8c7ae6)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        fontSize: '1rem',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        marginTop: '0.5rem'
+                    }}>{isLogin ? "Login" : "Register"}</button>
                 </form>
-
-                <p style={styles.switchText}>
+                <p style={{
+                    textAlign: 'center',
+                    marginTop: '1.5rem',
+                    color: '#b8b8b8'
+                }}>
                     {isLogin ? "Belum punya akun?" : "Sudah punya akun?"}{" "}
-                    <button
-                        style={styles.switchButton}
-                        onClick={() => {
-                            setErrorMsg("");
-                            setIsLogin(!isLogin);
-                        }}
-                    >
-                        {isLogin ? "Daftar di sini ♬" : "Login di sini ♬"}
+                    <button onClick={() => setIsLogin(!isLogin)} style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#9c88ff',
+                        cursor: 'pointer',
+                        fontSize: '1rem',
+                        textDecoration: 'underline',
+                        transition: 'all 0.3s ease'
+                    }}>
+                        {isLogin ? "Daftar" : "Login"}
                     </button>
                 </p>
             </div>
+
+            {/* Animation styles */}
+            <style>{`
+                @keyframes float {
+                    0% { transform: translateY(0px); }
+                    50% { transform: translateY(-10px); }
+                    100% { transform: translateY(0px); }
+                }
+                @keyframes twinkle {
+                    0% { opacity: 0.5; }
+                    50% { opacity: 1; }
+                    100% { opacity: 0.5; }
+                }
+            `}</style>
         </div>
     );
 };
 
-// Enhanced Moonlight Sonata inspired styles
-const styles = {
-    container: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        backgroundColor: "#0a0e23", // Darker navy blue for deeper night
-        backgroundImage: "radial-gradient(circle at 20% 30%, rgba(72, 101, 157, 0.3) 0%, transparent 30%), radial-gradient(circle at 80% 70%, rgba(114, 147, 203, 0.2) 0%, transparent 30%)",
-        padding: "20px",
-        fontFamily: "'Cormorant Garamond', serif", // More classical font
-        position: "relative",
-        overflow: "hidden",
-    },
-    moon: {
-        position: "absolute",
-        top: "10%",
-        right: "15%",
-        width: "120px",
-        height: "120px",
-        borderRadius: "50%",
-        background: "radial-gradient(circle at 30% 30%, #f8f8f8, #c0c0c0 60%, #a0a0a0 90%)",
-        boxShadow: "0 0 40px rgba(248, 248, 255, 0.4)",
-        opacity: "0.9",
-        zIndex: "0",
-    },
-    musicNote1: {
-        position: "absolute",
-        top: "25%",
-        left: "15%",
-        fontSize: "24px",
-        color: "rgba(228, 241, 254, 0.4)",
-        transform: "rotate(-15deg)",
-        animation: "float 6s ease-in-out infinite",
-    },
-    musicNote2: {
-        position: "absolute",
-        bottom: "20%",
-        right: "20%",
-        fontSize: "32px",
-        color: "rgba(228, 241, 254, 0.3)",
-        transform: "rotate(20deg)",
-        animation: "float 8s ease-in-out infinite",
-    },
-    card: {
-        backgroundColor: "rgba(15, 23, 42, 0.9)", // Dark blue with transparency
-        borderRadius: "12px",
-        padding: "40px",
-        width: "100%",
-        maxWidth: "400px",
-        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5)",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
-        backdropFilter: "blur(12px)",
-        position: "relative",
-        zIndex: "1",
-        borderTop: "1px solid rgba(255, 255, 255, 0.1)",
-        borderLeft: "1px solid rgba(255, 255, 255, 0.1)",
-    },
-    title: {
-        color: "#e4f1fe",
-        fontSize: "32px",
-        fontWeight: "500",
-        marginBottom: "8px",
-        textAlign: "center",
-        letterSpacing: "1px",
-        position: "relative",
-        fontVariant: "small-caps",
-    },
-    pianoKey: {
-        display: "block",
-        width: "60px",
-        height: "4px",
-        background: "linear-gradient(to right, #e4f1fe, #a7c4d4, #e4f1fe)",
-        margin: "10px auto",
-        borderRadius: "2px",
-    },
-    subtitle: {
-        color: "rgba(228, 241, 254, 0.7)",
-        fontSize: "16px",
-        textAlign: "center",
-        marginBottom: "30px",
-        fontStyle: "italic",
-        position: "relative",
-    },
-    subtitleDecoration: {
-        position: "absolute",
-        marginLeft: "8px",
-        fontSize: "18px",
-    },
-    form: {
-        display: "flex",
-        flexDirection: "column",
-        gap: "24px",
-    },
-    inputGroup: {
-        display: "flex",
-        flexDirection: "column",
-        gap: "8px",
-    },
-    label: {
-        color: "#a7c4d4",
-        fontSize: "15px",
-        fontWeight: "500",
-        letterSpacing: "0.5px",
-        display: "flex",
-        alignItems: "center",
-    },
-    labelIcon: {
-        marginRight: "8px",
-        fontSize: "14px",
-    },
-    input: {
-        padding: "14px 16px",
-        borderRadius: "6px",
-        border: "1px solid rgba(167, 196, 212, 0.2)",
-        backgroundColor: "rgba(10, 17, 40, 0.6)",
-        color: "#e4f1fe",
-        fontSize: "15px",
-        outline: "none",
-        transition: "all 0.3s ease",
-        letterSpacing: "0.5px",
-    },
-    inputFocus: {
-        borderColor: "#5d8bf4",
-        boxShadow: "0 0 0 2px rgba(93, 139, 244, 0.2)",
-    },
-    error: {
-        color: "#ff9e9e",
-        fontSize: "14px",
-        textAlign: "center",
-        margin: "10px 0",
-        fontStyle: "italic",
-    },
-    submitButton: {
-        padding: "16px",
-        borderRadius: "6px",
-        border: "none",
-        background: "linear-gradient(135deg, #5d8bf4 0%, #3a5fc8 100%)",
-        color: "#fff",
-        fontSize: "16px",
-        fontWeight: "500",
-        cursor: "pointer",
-        transition: "all 0.3s ease",
-        marginTop: "10px",
-        letterSpacing: "0.5px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        boxShadow: "0 4px 15px rgba(93, 139, 244, 0.3)",
-    },
-    buttonIcon: {
-        marginLeft: "8px",
-        transition: "all 0.3s ease",
-    },
-    switchText: {
-        color: "rgba(228, 241, 254, 0.7)",
-        fontSize: "15px",
-        textAlign: "center",
-        marginTop: "24px",
-        fontStyle: "italic",
-    },
-    switchButton: {
-        color: "#a7c4d4",
-        background: "none",
-        border: "none",
-        cursor: "pointer",
-        padding: "0",
-        fontSize: "15px",
-        fontWeight: "500",
-        textDecoration: "none",
-        fontStyle: "italic",
-        transition: "all 0.3s ease",
-        letterSpacing: "0.5px",
-    },
-};
 export default Auth;
