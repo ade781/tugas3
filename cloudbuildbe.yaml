@@ -1,6 +1,8 @@
 steps:
   # Membuat image dengan perintah "cloud build -t gcr.io/$PROJECT_ID/tcc-be ."
   # Project ID akan secara otomatis terisi ketika melakukan deploy di project yg dipilih
+  - name: "gcr.io/cloud-builders/gsutil"
+    args: ["cp", "${_ENV}", "backend/.env"]
   - name: "gcr.io/cloud-builders/docker"
     args: ["build", "-t", "gcr.io/$PROJECT_ID/tcc-be", "./backend"]
 
