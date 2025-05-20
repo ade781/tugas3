@@ -4,8 +4,8 @@ steps:
   - name: "gcr.io/cloud-builders/gsutil"
     args: ["cp", "${_ENV}", "backend/.env"]
   - name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/$PROJECT_ID/tcc-be", "./backend"]
-
+    args: ["build", "-t", "gcr.io/$PROJECT_ID/tcc-be", "."]
+    dir : "backend"
   # Meng-upload/push image yg telah dibuat ke Artifact Registry
   # Pada bagian ini, dijalankan perintah "docker push 'gcr.io/$PROJECT_ID/tcc-be'"
   - name: "gcr.io/cloud-builders/docker"
